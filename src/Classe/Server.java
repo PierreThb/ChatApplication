@@ -54,9 +54,11 @@ public class Server {
                             Matcher m = r.matcher(msg);
                             if (m.find()) {
                                 System.out.println("New pseudo receive: " + m.group(1));
+                                sf.setListClient(m.group(1));
                             } else {
                                 sendGlobalMessage(msg);
                                 System.out.println("New message receive: " + msg);
+                                sf.setListMessage(msg);
                             }
                         }
                     } catch (IOException ex) {

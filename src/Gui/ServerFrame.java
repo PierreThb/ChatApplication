@@ -18,11 +18,11 @@ public class ServerFrame extends javax.swing.JFrame {
     }
     
     public void setListClient(String str){
-        area_clients.setText(area_clients.getText()+str);
+        area_clients.setText(area_clients.getText()+str+"\n");
     }
     
     public void setListMessage(String str){
-        area_messages.setText(area_messages.getText()+str);
+        area_messages.setText(area_messages.getText()+str+"\n");
     }
 
     /**

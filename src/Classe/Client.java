@@ -7,7 +7,6 @@ package Classe;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,20 +17,24 @@ import java.util.logging.Logger;
 public class Client {
 
     private Socket s;
-    private int id;
-    private String message;
+    private String id;
+    private String lastMessage;
     private DataOutputStream dout;
     private DataInputStream din;
-    
+    private boolean newMessage = false;
 
-    public Client(int id) {
+    /* Constructor where we initialize the connection with the server and
+    the id of the client (number or name?), also initialize the dout and din
+    and send to the server the id of the client and start the class waitForMessage
+     */
+    public Client(String id) {
         try {
             Socket socket = new Socket("localhost", 5001);
             this.s = socket;
             this.id = id;
             dout = new DataOutputStream(s.getOutputStream());
             din = new DataInputStream(s.getInputStream());
-            dout.writeUTF("me:"+this.id);
+            dout.writeUTF("me:" + this.id);
             dout.flush();
             new waitForMessage().start();
         } catch (IOException ex) {
@@ -40,22 +43,27 @@ public class Client {
         }
     }
 
-    public int getId() {
-        return id;
+    /* Setter */
+    public void setNewMessageBool(boolean bool) {
+        this.newMessage = bool;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    /* Getter */
+    public boolean getNewMessageBool() {
+        return newMessage;
     }
 
-    public String getMessage() {
-        return message;
+    /* Setter */
+    public void setLastMessage(String message) {
+        this.lastMessage = message;
     }
 
-    public void getMessage(String msg) {
-        
+    /* Getter */
+    public String getLastMessage() {
+        return lastMessage;
     }
 
+    /* Function which send a mesage to the server */
     public void sendNewMessage(String message) {
         try {
             dout.writeUTF(message);
@@ -65,12 +73,18 @@ public class Client {
         }
     }
 
-    class waitForMessage extends Thread{
-        public void run(){
-            while (true) {                
+    /* Class which wait for a new message comming from the server 
+    and set the boolean at true to display in the ClientFrame
+     */
+    class waitForMessage extends Thread {
+
+        public void run() {
+            while (true) {
                 try {
-                    if(din.available()>0){
-                        System.out.println("receive:"+din.readUTF());
+                    if (din.available() > 0) { //check if there is a data in din
+                        System.out.println("receive:" + din.readUTF());
+                        setLastMessage(din.readUTF());
+                        setNewMessageBool(true);
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);

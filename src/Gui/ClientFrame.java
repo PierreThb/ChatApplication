@@ -14,6 +14,17 @@ import java.awt.event.KeyEvent;
  */
 public class ClientFrame extends javax.swing.JFrame {
 
+    class waitForMessage extends Thread {
+        public void run() {
+            while (true) {
+                if (client.getNewMessageBool() == true) {
+                    areaMessages.setText(areaMessages.getText() + client.getLastMessage() + "\n");
+                    client.setNewMessageBool(false);
+                }
+            }
+        }
+    }
+
     private String username = "";
     private String msg = "";
     private Client client;
@@ -23,7 +34,6 @@ public class ClientFrame extends javax.swing.JFrame {
      */
     public ClientFrame() {
         initComponents();
-        client = new Client((int) (Math.random() * 1000));
         field_message.setEditable(false);
         button_message.setEnabled(false);
     }
@@ -42,7 +52,7 @@ public class ClientFrame extends javax.swing.JFrame {
         field_username = new javax.swing.JTextField();
         button_username = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        areaMessages = new javax.swing.JTextArea();
         field_message = new javax.swing.JTextField();
         button_message = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
@@ -55,6 +65,12 @@ public class ClientFrame extends javax.swing.JFrame {
         label1.setForeground(new java.awt.Color(0, 0, 204));
         label1.setText("Client");
 
+        field_username.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                field_usernameKeyPressed(evt);
+            }
+        });
+
         button_username.setText("Ok");
         button_username.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -62,10 +78,10 @@ public class ClientFrame extends javax.swing.JFrame {
             }
         });
 
-        jTextArea1.setEditable(false);
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        areaMessages.setEditable(false);
+        areaMessages.setColumns(20);
+        areaMessages.setRows(5);
+        jScrollPane1.setViewportView(areaMessages);
 
         field_message.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -153,6 +169,13 @@ public class ClientFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_field_messageKeyPressed
 
+    private void field_usernameKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_field_usernameKeyPressed
+        // TODO add your handling code here:
+        if(!field_username.getText().equals("") && (evt.getKeyCode() == KeyEvent.VK_ENTER)){
+            setUserName();
+        }
+    }//GEN-LAST:event_field_usernameKeyPressed
+
     private void setUserName() {
         field_message.setEditable(true);
         field_username.setEditable(false);
@@ -160,6 +183,8 @@ public class ClientFrame extends javax.swing.JFrame {
         button_username.setEnabled(false);
         username = field_username.getText();
         System.out.println("UserName: " + username);
+        client = new Client(username);
+        new waitForMessage().start();
     }
 
     private void setMessage() {
@@ -204,6 +229,7 @@ public class ClientFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextArea areaMessages;
     private javax.swing.JButton button_message;
     private javax.swing.JButton button_username;
     private javax.swing.JTextField field_message;
@@ -211,7 +237,6 @@ public class ClientFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTextArea jTextArea1;
     private java.awt.Label label1;
     // End of variables declaration//GEN-END:variables
 }
