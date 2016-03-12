@@ -63,13 +63,22 @@ public class Client {
         return lastMessage;
     }
 
-    /* Function which send a mesage to the server */
+    /* Function which send a mesage for all client to the server */
     public void sendNewMessage(String message) {
         try {
-            dout.writeUTF(message);
+            dout.writeUTF("all:"+message);
         } catch (IOException ex) {
             System.out.println("Exception in sendNewMessage()");
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /* Function which send a message for all client to the server */
+    public void sendPrivateMessage(String message, String clientName){
+        try {
+            dout.writeUTF("private:"+message);
+        } catch (Exception e) {
+            System.out.println("Exception in sendPrivateMessage()"+e.getMessage());
         }
     }
 

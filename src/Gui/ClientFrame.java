@@ -25,9 +25,22 @@ public class ClientFrame extends javax.swing.JFrame {
         }
     }
 
+    class popup extends Thread {
+        public void run() {
+            do {
+                popup.setVisible(true);
+            } while (popup.isVisible());
+            if (popup.isOk()) {
+                setFieldConfirmPrivateMessage();
+            }
+        }
+    }
+
     private String username = "";
     private String msg = "";
+    private String privateMsg = "";
     private Client client;
+    private ListClientConnectedFrame popup = new ListClientConnectedFrame();
 
     /**
      * Creates new form ClientFrame
@@ -35,8 +48,10 @@ public class ClientFrame extends javax.swing.JFrame {
     public ClientFrame() {
         initComponents();
         field_message.setEditable(false);
-        //button_message.setEnabled(false);
-        //button_privatemessage.setEnabled(false);
+        button_message.setEnabled(false);
+        button_privatemessage.setEnabled(false);
+        button_cancelprivate.setEnabled(false);
+        button_okprivate.setEnabled(false);
     }
 
     /**
@@ -59,6 +74,10 @@ public class ClientFrame extends javax.swing.JFrame {
         field_message = new javax.swing.JTextField();
         button_message = new javax.swing.JButton();
         button_privatemessage = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        field_confirmprivatemessage = new javax.swing.JTextField();
+        button_okprivate = new javax.swing.JButton();
+        button_cancelprivate = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -146,11 +165,10 @@ public class ClientFrame extends javax.swing.JFrame {
                     .addComponent(jScrollPane1)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(field_message, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(button_privatemessage)
-                            .addComponent(button_message, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                            .addComponent(button_message, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
 
@@ -172,6 +190,53 @@ public class ClientFrame extends javax.swing.JFrame {
 
         jPanel2Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {button_message, button_privatemessage, field_message});
 
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Private message"));
+
+        field_confirmprivatemessage.setEditable(false);
+
+        button_okprivate.setText("Ok");
+        button_okprivate.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                button_okprivateMouseClicked(evt);
+            }
+        });
+
+        button_cancelprivate.setText("Cancel");
+        button_cancelprivate.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                button_cancelprivateMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(field_confirmprivatemessage)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(button_cancelprivate)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(button_okprivate, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+
+        jPanel3Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {button_cancelprivate, button_okprivate});
+
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addComponent(field_confirmprivatemessage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(button_cancelprivate)
+                    .addComponent(button_okprivate)))
+        );
+
+        jPanel3Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {button_cancelprivate, button_okprivate, field_confirmprivatemessage});
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -186,7 +251,8 @@ public class ClientFrame extends javax.swing.JFrame {
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -198,6 +264,8 @@ public class ClientFrame extends javax.swing.JFrame {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 407, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -214,43 +282,79 @@ public class ClientFrame extends javax.swing.JFrame {
     private void button_messageMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_messageMouseClicked
         // TODO add your handling code here:
         if (!field_message.getText().equals("")) {
-            setMessage();
+            setAndSendMessage();
         }
     }//GEN-LAST:event_button_messageMouseClicked
 
     private void field_messageKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_field_messageKeyPressed
         // TODO add your handling code here:
         if (!field_message.getText().equals("") && (evt.getKeyCode() == KeyEvent.VK_ENTER)) {
-            setMessage();
+            setAndSendMessage();
         }
     }//GEN-LAST:event_field_messageKeyPressed
 
     private void field_usernameKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_field_usernameKeyPressed
         // TODO add your handling code here:
-        if(!field_username.getText().equals("") && (evt.getKeyCode() == KeyEvent.VK_ENTER)){
+        if (!field_username.getText().equals("") && (evt.getKeyCode() == KeyEvent.VK_ENTER)) {
             setUserName();
         }
     }//GEN-LAST:event_field_usernameKeyPressed
 
     private void button_privatemessageMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_privatemessageMouseClicked
         // TODO add your handling code here:
+        new popup().start();
     }//GEN-LAST:event_button_privatemessageMouseClicked
+
+    private void button_okprivateMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_okprivateMouseClicked
+        // TODO add your handling code here:
+        username = popup.getSelectedClient();
+        setAndSendPrivateMessage();
+        System.out.println("private message send: " + field_message.getText()+"\n");
+
+        field_confirmprivatemessage.setText("");
+        field_message.setText("");
+        button_message.setEnabled(true);
+        button_privatemessage.setEnabled(true);
+        button_cancelprivate.setEnabled(false);
+        button_okprivate.setEnabled(false);
+    }//GEN-LAST:event_button_okprivateMouseClicked
+
+    private void button_cancelprivateMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_cancelprivateMouseClicked
+        // TODO add your handling code here:
+        button_message.setEnabled(true);
+        button_privatemessage.setEnabled(true);
+        button_cancelprivate.setEnabled(false);
+        button_okprivate.setEnabled(false);
+        field_confirmprivatemessage.setText("");
+    }//GEN-LAST:event_button_cancelprivateMouseClicked
 
     private void setUserName() {
         field_message.setEditable(true);
         field_username.setEditable(false);
         button_message.setEnabled(true);
         button_username.setEnabled(false);
+        button_privatemessage.setEnabled(true);
         username = field_username.getText();
         System.out.println("UserName: " + username);
         client = new Client(username);
         new waitForMessage().start();
     }
+    
+    private void setAndSendPrivateMessage(){
+        privateMsg = field_message.getText();
+        client.sendPrivateMessage(msg, "Pierre");
+    }
 
-    private void setMessage() {
+    private void setAndSendMessage() {
         msg = field_message.getText();
         client.sendNewMessage(msg);
         field_message.setText("");
+    }
+
+    private void setFieldConfirmPrivateMessage() {
+        field_confirmprivatemessage.setText("Send private message to " + popup.getSelectedClient() + " ?");
+        button_cancelprivate.setEnabled(true);
+        button_okprivate.setEnabled(true);
     }
 
     /**
@@ -290,14 +394,18 @@ public class ClientFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea areaMessages;
+    private javax.swing.JButton button_cancelprivate;
     private javax.swing.JButton button_message;
+    private javax.swing.JButton button_okprivate;
     private javax.swing.JButton button_privatemessage;
     private javax.swing.JButton button_username;
+    private javax.swing.JTextField field_confirmprivatemessage;
     private javax.swing.JTextField field_message;
     private javax.swing.JTextField field_username;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private java.awt.Label label1;
     // End of variables declaration//GEN-END:variables

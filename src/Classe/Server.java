@@ -28,6 +28,7 @@ public class Server {
 
     private final ArrayList<DataInputStream> clientSocket;
     private final ArrayList<DataOutputStream> outputStreams;
+    private final ArrayList<String> listClientName;
     private final WaitToConnection waiter;
 
     private final ServerSocket serverSocket;
@@ -35,10 +36,17 @@ public class Server {
     String pattern = "^me:([\\d\\D]+)$";
     Pattern r = Pattern.compile(pattern);
 
+    String patternPrivate = "^private:([\\d\\D]+)$";
+    Pattern patPrivate = Pattern.compile(patternPrivate);
+
+    String patternAll = "^all:([\\d\\D]+)$";
+    Pattern patAll = Pattern.compile(patternAll);
+
     public Server() throws IOException {
         serverSocket = new ServerSocket(5001);
         clientSocket = new ArrayList<>();
         outputStreams = new ArrayList<>();
+        listClientName = new ArrayList<>();
         waiter = new WaitToConnection();
     }
 
@@ -52,13 +60,20 @@ public class Server {
                         if (din.available() > 0) {
                             String msg = din.readUTF();
                             Matcher m = r.matcher(msg);
+                            Matcher mPrivate = patPrivate.matcher(msg);
+                            Matcher mAll = patAll.matcher(msg);
                             if (m.find()) {
                                 System.out.println("New pseudo receive: " + m.group(1));
+                                listClientName.add(m.group(1));
                                 sf.setListClient(m.group(1));
-                            } else {
-                                sendGlobalMessage(msg);
-                                System.out.println("New message receive: " + msg);
-                                sf.setListMessage(msg);
+                            } else if (mAll.find()) {
+                                sendGlobalMessage(mAll.group(1));
+                                System.out.println("New message for all receive: " + mAll.group(1));
+                                sf.setListMessage(mAll.group(1));
+                            } else if(mPrivate.find()){
+                                sendPrivateMessage(mPrivate.group(1), "Pierre");
+                                System.out.println("New private message receive: " + mPrivate.group(1));
+                                sf.setListMessage(mPrivate.group(1));
                             }
                         }
                     } catch (IOException ex) {
@@ -66,7 +81,6 @@ public class Server {
                     }
                 }
             }
-
         }
     }
 
@@ -77,11 +91,15 @@ public class Server {
                 dout.flush();
             }
         }
-
     }
 
-    public void sendPrivateMessage(String msg, int id) throws IOException {
-
+    public void sendPrivateMessage(String msg, String clientName) throws IOException {
+        int id = listClientName.indexOf(clientName);
+        synchronized (outputStreams) {
+            DataOutputStream dout = outputStreams.get(id);
+            dout.writeUTF(msg);
+            dout.flush();
+        }
     }
 
     public static void main(String[] args) {
@@ -114,7 +132,6 @@ public class Server {
                     System.out.println("Exception in run() of class waitconnecction" + ex.getMessage());
                 }
             }
-
         }
     }
 
