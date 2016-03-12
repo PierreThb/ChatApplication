@@ -36,7 +36,7 @@ public class Server {
     String pattern = "^me:([\\d\\D]+)$";
     Pattern r = Pattern.compile(pattern);
 
-    String patternPrivate = "^private:([\\d\\D]+)$";
+    String patternPrivate = "^private:([\\d\\D]+)$"; //change pattern to allow name
     Pattern patPrivate = Pattern.compile(patternPrivate);
 
     String patternAll = "^all:([\\d\\D]+)$";
@@ -70,7 +70,7 @@ public class Server {
                                 sendGlobalMessage(mAll.group(1));
                                 System.out.println("New message for all receive: " + mAll.group(1));
                                 sf.setListMessage(mAll.group(1));
-                            } else if(mPrivate.find()){
+                            } else if(mPrivate.find()){ //* Problem here with this if
                                 sendPrivateMessage(mPrivate.group(1), "Pierre");
                                 System.out.println("New private message receive: " + mPrivate.group(1));
                                 sf.setListMessage(mPrivate.group(1));

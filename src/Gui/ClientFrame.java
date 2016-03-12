@@ -15,6 +15,7 @@ import java.awt.event.KeyEvent;
 public class ClientFrame extends javax.swing.JFrame {
 
     class waitForMessage extends Thread {
+
         public void run() {
             while (true) {
                 if (client.getNewMessageBool() == true) {
@@ -26,6 +27,7 @@ public class ClientFrame extends javax.swing.JFrame {
     }
 
     class popup extends Thread {
+
         public void run() {
             do {
                 popup.setVisible(true);
@@ -134,12 +136,6 @@ public class ClientFrame extends javax.swing.JFrame {
         areaMessages.setColumns(20);
         areaMessages.setRows(5);
         jScrollPane1.setViewportView(areaMessages);
-
-        field_message.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                field_messageKeyPressed(evt);
-            }
-        });
 
         button_message.setText("Send All");
         button_message.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -272,44 +268,39 @@ public class ClientFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /* button validate username */
     private void button_usernameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_usernameMouseClicked
-        // TODO add your handling code here:
-        if (!field_username.getText().equals("")) {
+       if (!field_username.getText().equals("")) {
             setUserName();
         }
     }//GEN-LAST:event_button_usernameMouseClicked
 
+    /* button send message */
     private void button_messageMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_messageMouseClicked
-        // TODO add your handling code here:
-        if (!field_message.getText().equals("")) {
+       if (!field_message.getText().equals("")) {
             setAndSendMessage();
         }
     }//GEN-LAST:event_button_messageMouseClicked
 
-    private void field_messageKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_field_messageKeyPressed
-        // TODO add your handling code here:
-        if (!field_message.getText().equals("") && (evt.getKeyCode() == KeyEvent.VK_ENTER)) {
-            setAndSendMessage();
-        }
-    }//GEN-LAST:event_field_messageKeyPressed
-
+    /* validate field username when press enter */
     private void field_usernameKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_field_usernameKeyPressed
-        // TODO add your handling code here:
-        if (!field_username.getText().equals("") && (evt.getKeyCode() == KeyEvent.VK_ENTER)) {
+       if (!field_username.getText().equals("") && (evt.getKeyCode() == KeyEvent.VK_ENTER)) {
             setUserName();
         }
     }//GEN-LAST:event_field_usernameKeyPressed
 
+    /* Button private message */
     private void button_privatemessageMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_privatemessageMouseClicked
-        // TODO add your handling code here:
-        new popup().start();
+       if (!field_message.equals("")) {
+            new popup().start();
+        }
     }//GEN-LAST:event_button_privatemessageMouseClicked
-
+    
+    /* Button validate private message */
     private void button_okprivateMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_okprivateMouseClicked
-        // TODO add your handling code here:
         username = popup.getSelectedClient();
         setAndSendPrivateMessage();
-        System.out.println("private message send: " + field_message.getText()+"\n");
+        System.out.println("private message send: " + privateMsg + "\n");
 
         field_confirmprivatemessage.setText("");
         field_message.setText("");
@@ -319,15 +310,16 @@ public class ClientFrame extends javax.swing.JFrame {
         button_okprivate.setEnabled(false);
     }//GEN-LAST:event_button_okprivateMouseClicked
 
+    /* Button Cancel private message */
     private void button_cancelprivateMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_cancelprivateMouseClicked
-        // TODO add your handling code here:
-        button_message.setEnabled(true);
+       button_message.setEnabled(true);
         button_privatemessage.setEnabled(true);
         button_cancelprivate.setEnabled(false);
         button_okprivate.setEnabled(false);
         field_confirmprivatemessage.setText("");
     }//GEN-LAST:event_button_cancelprivateMouseClicked
 
+    /* set the user name, create the new object Client and start thread waitForMessage */
     private void setUserName() {
         field_message.setEditable(true);
         field_username.setEditable(false);
@@ -339,18 +331,21 @@ public class ClientFrame extends javax.swing.JFrame {
         client = new Client(username);
         new waitForMessage().start();
     }
-    
-    private void setAndSendPrivateMessage(){
+
+    /* set private message and send it */
+    private void setAndSendPrivateMessage() {
         privateMsg = field_message.getText();
-        client.sendPrivateMessage(msg, "Pierre");
+        client.sendPrivateMessage(privateMsg, "Pierre");
     }
 
+    /* set normal message and send it */
     private void setAndSendMessage() {
         msg = field_message.getText();
         client.sendNewMessage(msg);
         field_message.setText("");
     }
 
+    /* set the field to confirm the private message */
     private void setFieldConfirmPrivateMessage() {
         field_confirmprivatemessage.setText("Send private message to " + popup.getSelectedClient() + " ?");
         button_cancelprivate.setEnabled(true);

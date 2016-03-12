@@ -193,9 +193,6 @@
           </SubComponents>
         </Container>
         <Component class="javax.swing.JTextField" name="field_message">
-          <Events>
-            <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="field_messageKeyPressed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="button_message">
           <Properties>
