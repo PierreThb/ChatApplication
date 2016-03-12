@@ -70,7 +70,7 @@ public class Server {
                                 sendGlobalMessage(mAll.group(1));
                                 System.out.println("New message for all receive: " + mAll.group(1));
                                 sf.setListMessage(mAll.group(1));
-                            } else if(mPrivate.find()){ //* Problem here with this if
+                            } else if(mPrivate.find()){
                                 sendPrivateMessage(mPrivate.group(1), "Pierre");
                                 System.out.println("New private message receive: " + mPrivate.group(1));
                                 sf.setListMessage(mPrivate.group(1));
