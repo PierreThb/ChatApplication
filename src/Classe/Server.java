@@ -33,17 +33,17 @@ public class Server {
 
     private final ServerSocket serverSocket;
 
-    String pattern = "^me:([\\d\\D]+)$";
+    String pattern = "^me:([\\d\\D]+)$"; //me:clientName
     Pattern r = Pattern.compile(pattern);
 
-    String patternPrivate = "^private:([\\d\\D]+)$"; //change pattern to allow name
+    String patternPrivate = "^¤¤([^:]+):(.*)$"; //¤¤clientName:message
     Pattern patPrivate = Pattern.compile(patternPrivate);
 
-    String patternAll = "^all:([\\d\\D]+)$";
+    String patternAll = "^all:([\\d\\D]+)$"; //all:message
     Pattern patAll = Pattern.compile(patternAll);
 
     public Server() throws IOException {
-        serverSocket = new ServerSocket(5001);
+        serverSocket = new ServerSocket(5000);
         clientSocket = new ArrayList<>();
         outputStreams = new ArrayList<>();
         listClientName = new ArrayList<>();
@@ -66,13 +66,14 @@ public class Server {
                                 System.out.println("New pseudo receive: " + m.group(1));
                                 listClientName.add(m.group(1));
                                 sf.setListClient(m.group(1));
+                                sendGlobalMessage(listClientName.toString());
                             } else if (mAll.find()) {
-                                sendGlobalMessage(mAll.group(1));
                                 System.out.println("New message for all receive: " + mAll.group(1));
+                                sendGlobalMessage(mAll.group(1));
                                 sf.setListMessage(mAll.group(1));
-                            } else if(mPrivate.find()){
-                                sendPrivateMessage(mPrivate.group(1), "Pierre");
-                                System.out.println("New private message receive: " + mPrivate.group(1));
+                            } else if (mPrivate.find()) {
+                                System.out.println("New private message receive: " + mPrivate.group(2));
+                                sendPrivateMessage(mPrivate.group(2), mPrivate.group(1));
                                 sf.setListMessage(mPrivate.group(1));
                             }
                         }
@@ -104,12 +105,11 @@ public class Server {
 
     public static void main(String[] args) {
         try {
-            sf.setVisible(true);
+            //sf.setVisible(true);
             Server mserver = new Server();
             mserver.run();
         } catch (IOException ex) {
-            System.out.println("Problem when creation or the object Server");
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Problem when creation of the object Server"+ex.getMessage());
         }
     }
 
@@ -134,5 +134,4 @@ public class Server {
             }
         }
     }
-
 }

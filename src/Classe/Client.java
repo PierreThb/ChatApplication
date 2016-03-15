@@ -7,6 +7,8 @@ package Classe;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,15 +23,18 @@ public class Client {
     private String lastMessage;
     private DataOutputStream dout;
     private DataInputStream din;
-    private boolean newMessage = false;
+    private boolean boolNewMessage = false;
+    private boolean boolNewClient = false;
+    private final ArrayList<String> listClientName;
 
     /* Constructor where we initialize the connection with the server and
     the id of the client (number or name?), also initialize the dout and din
     and send to the server the id of the client and start the class waitForMessage
      */
     public Client(String id) {
+        listClientName = new ArrayList<>();
         try {
-            Socket socket = new Socket("localhost", 5001);
+            Socket socket = new Socket("localhost", 5000);
             this.s = socket;
             this.id = id;
             dout = new DataOutputStream(s.getOutputStream());
@@ -38,24 +43,47 @@ public class Client {
             dout.flush();
             new waitForMessage().start();
         } catch (IOException ex) {
-            System.out.println("Exception in Client()");
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Exception in Client()" + ex.getMessage());
         }
     }
 
+    /* setter */
+    public void setListConnectedClient(String str) {
+        synchronized (listClientName) {
+            listClientName.clear();
+            String[] arr = str.replaceAll("\\[", "").replaceAll("\\]", "").split(", ");
+            listClientName.addAll(Arrays.asList(arr));
+            System.out.println("listclientname: " + listClientName);
+            setNewClientBool(true);
+        }
+    }
+
+    /* getter */
+    public ArrayList<String> getListClientName() {
+        return listClientName;
+    }
+
     /* Setter */
-    public void setNewMessageBool(boolean bool) {
-        this.newMessage = bool;
+    public synchronized void setNewMessageBool(boolean bool) {
+        this.boolNewMessage = bool;
     }
 
     /* Getter */
-    public boolean getNewMessageBool() {
-        return newMessage;
+    public synchronized boolean getNewMessageBool() {
+        return boolNewMessage;
+    }
+    
+    public synchronized void setNewClientBool(boolean bool){
+        this.boolNewClient = bool;
+    }
+    public synchronized boolean getNewClientBool(){
+        return boolNewClient;
     }
 
     /* Setter */
     public void setLastMessage(String message) {
         this.lastMessage = message;
+        setNewMessageBool(true);
     }
 
     /* Getter */
@@ -66,19 +94,18 @@ public class Client {
     /* Function which send a mesage for all client to the server */
     public void sendNewMessage(String message) {
         try {
-            dout.writeUTF("all:"+message);
+            dout.writeUTF("all:" +id+": "+message);
         } catch (IOException ex) {
-            System.out.println("Exception in sendNewMessage()");
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Exception in sendNewMessage()" + ex.getMessage());
         }
     }
-    
+
     /* Function which send a message for all client to the server */
-    public void sendPrivateMessage(String message, String clientName){
+    public void sendPrivateMessage(String message, String clientName) {
         try {
-            dout.writeUTF("private:"+message);
+            dout.writeUTF("¤¤" + clientName + ":" + id+": "+message);
         } catch (Exception e) {
-            System.out.println("Exception in sendPrivateMessage()"+e.getMessage());
+            System.out.println("Exception in sendPrivateMessage()" + e.getMessage());
         }
     }
 
@@ -88,12 +115,17 @@ public class Client {
     class waitForMessage extends Thread {
 
         public void run() {
+            String msg;
             while (true) {
                 try {
-                    if (din.available() > 0) { //check if there is a data in din
-                        System.out.println("receive:" + din.readUTF());
-                        setLastMessage(din.readUTF());
-                        setNewMessageBool(true);
+                    if ((msg = din.readUTF()) != null) { //check if there is a data in din
+                        if (msg.startsWith("[")) {
+                            setListConnectedClient(msg);
+                        } else {
+                            System.out.println("receive:" + msg);
+                            setLastMessage(msg);
+                        }
+                        msg = null;
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
