@@ -42,6 +42,10 @@ public class Server {
     String patternAll = "^all:([\\d\\D]+)$"; //all:message
     Pattern patAll = Pattern.compile(patternAll);
 
+    String patternLeave = "^¤leave¤:([\\d\\D]+)$"; //¤Leave¤:clientName
+    Pattern patLeave = Pattern.compile(patternLeave);
+    
+
     public Server() throws IOException {
         serverSocket = new ServerSocket(5000);
         clientSocket = new ArrayList<>();
@@ -62,6 +66,7 @@ public class Server {
                             Matcher m = r.matcher(msg);
                             Matcher mPrivate = patPrivate.matcher(msg);
                             Matcher mAll = patAll.matcher(msg);
+                            Matcher mLeave = patLeave.matcher(msg);
                             if (m.find()) {
                                 System.out.println("New pseudo receive: " + m.group(1));
                                 listClientName.add(m.group(1));
@@ -75,6 +80,9 @@ public class Server {
                                 System.out.println("New private message receive: " + mPrivate.group(2));
                                 sendPrivateMessage(mPrivate.group(2), mPrivate.group(1));
                                 sf.setListMessage(mPrivate.group(1));
+                            } else if (mLeave.find()){
+                                System.out.println("Client "+mLeave.group(1)+" left");
+                                clientLeave(mLeave.group(1));
                             }
                         }
                     } catch (IOException ex) {
@@ -102,6 +110,15 @@ public class Server {
             dout.flush();
         }
     }
+    
+    public void clientLeave(String clientName) throws IOException{
+        int id = listClientName.indexOf(clientName);
+        synchronized(outputStreams){
+            outputStreams.remove(id);
+            listClientName.remove(id);
+            sendGlobalMessage(listClientName.toString());
+        }
+    }
 
     public static void main(String[] args) {
         try {
@@ -109,7 +126,7 @@ public class Server {
             Server mserver = new Server();
             mserver.run();
         } catch (IOException ex) {
-            System.out.println("Problem when creation of the object Server"+ex.getMessage());
+            System.out.println("Problem when creation of the object Server" + ex.getMessage());
         }
     }
 

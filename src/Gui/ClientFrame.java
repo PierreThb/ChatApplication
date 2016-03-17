@@ -7,12 +7,7 @@ package Gui;
 
 import Classe.*;
 import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 import javax.swing.DefaultListModel;
 
 /**
@@ -21,10 +16,12 @@ import javax.swing.DefaultListModel;
  */
 public class ClientFrame extends javax.swing.JFrame {
 
-    Boolean isConnected = false;
-    private Socket s;
-    String address = "localhost";
-    int port = 2222;
+    private String username = "";
+    private String msg = "";
+    private String privateMsg = "";
+    private ArrayList<String> listclients;
+    private Client client;
+    DefaultListModel model = new DefaultListModel();
 
     class waitForMessage extends Thread {
 
@@ -38,26 +35,17 @@ public class ClientFrame extends javax.swing.JFrame {
         }
     }
 
-    class newClient extends Thread {
+    class waitForNewClient extends Thread {
 
         public void run() {
             while (true) {
                 if (client.getNewClientBool()) {
                     setListClientConnected();
                     client.setNewClientBool(false);
-                    index++;
                 }
             }
         }
     }
-
-    private String username = "";
-    private String msg = "";
-    private String privateMsg = "";
-    private int index = 0;
-    private ArrayList<String> listclients;
-    private Client client;
-    DefaultListModel model = new DefaultListModel();
 
     /**
      * Creates new form ClientFrame
@@ -112,12 +100,7 @@ public class ClientFrame extends javax.swing.JFrame {
         });
 
         field_username.setBackground(new java.awt.Color(255, 255, 204));
-        field_username.setForeground(new java.awt.Color(255, 255, 204));
-        field_username.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                field_usernameActionPerformed(evt);
-            }
-        });
+        field_username.setForeground(new java.awt.Color(0, 0, 0));
         field_username.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 field_usernameKeyPressed(evt);
@@ -174,11 +157,12 @@ public class ClientFrame extends javax.swing.JFrame {
         areaMessages.setEditable(false);
         areaMessages.setBackground(new java.awt.Color(255, 255, 204));
         areaMessages.setColumns(20);
-        areaMessages.setForeground(new java.awt.Color(255, 255, 204));
+        areaMessages.setForeground(new java.awt.Color(0, 0, 0));
         areaMessages.setRows(5);
         jScrollPane1.setViewportView(areaMessages);
 
         field_message.setBackground(new java.awt.Color(255, 255, 204));
+        field_message.setForeground(new java.awt.Color(0, 0, 0));
 
         button_message.setBackground(new java.awt.Color(0, 0, 204));
         button_message.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/symbol (1).png"))); // NOI18N
@@ -205,7 +189,12 @@ public class ClientFrame extends javax.swing.JFrame {
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Lobby"));
 
         listclientconnected.setBackground(new java.awt.Color(255, 255, 204));
-        listclientconnected.setForeground(new java.awt.Color(255, 255, 204));
+        listclientconnected.setForeground(new java.awt.Color(0, 0, 0));
+        listclientconnected.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                listclientconnectedMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(listclientconnected);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -230,6 +219,11 @@ public class ClientFrame extends javax.swing.JFrame {
         button_leave.setText("Leave");
         button_leave.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         button_leave.setIconTextGap(10);
+        button_leave.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                button_leaveMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -332,7 +326,7 @@ public class ClientFrame extends javax.swing.JFrame {
 
     /* Button private message */
     private void button_privatemessageMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_privatemessageMouseClicked
-        if (!field_message.equals("")) {
+        if (!field_message.getText().equals("")) {
             setAndSendPrivateMessage();
         }
     }//GEN-LAST:event_button_privatemessageMouseClicked
@@ -346,42 +340,39 @@ public class ClientFrame extends javax.swing.JFrame {
 
     private void anonomousLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_anonomousLoginActionPerformed
         // TODO add your handling code here:
-        field_username.setText("");
-        if (isConnected == false) {
-            String anon = "anon";
-            Random generator = new Random();
-            int i = generator.nextInt(999) + 1;
-            String is = String.valueOf(i);
-            anon = anon.concat(is);
-            username = anon;
-
-            field_username.setText(anon);
-            field_username.setEditable(false);
-
-            try {
-                s = new Socket(address, port);
-                InputStreamReader streamreader = new InputStreamReader(s.getInputStream());
-                BufferedReader reader = new BufferedReader(streamreader);
-                PrintWriter writer = new PrintWriter(s.getOutputStream());
-                writer.println(anon + ":has connected.:Connect");
-                writer.flush();
-                isConnected = true;
-            } catch (Exception e) {
-                areaMessages.append("Cannot Connect! Try Again. \n");
-                field_username.setEditable(true);
-            }
-
-            setUserName();
-
-        } else if (isConnected == true) {
-            areaMessages.append("You are already connected. \n");
-        }
-
+        field_message.setEditable(true);
+        field_username.setEditable(false);
+        button_message.setEnabled(true);
+        button_username.setEnabled(false);
+        anonomousLogin.setEnabled(false);
+        String anon = "anon";
+        Random generator = new Random();
+        int i = generator.nextInt(999) + 1;
+        String is = String.valueOf(i);
+        anon = anon.concat(is);
+        username = anon;
+        field_username.setText(anon);
+        /* I remove the connection to the server that you was trying 
+        to do here because you just have to call the constructor
+        of Client class with the username as parameter and then start the 2
+        thread waitForMessage and waitForNewClient. Indeed, the connection
+        to the server is make in the constructor of the Client class :)
+         */
+        client = new Client(anon);
+        new waitForMessage().start();
+        new waitForNewClient().start();
     }//GEN-LAST:event_anonomousLoginActionPerformed
 
-    private void field_usernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_field_usernameActionPerformed
+    private void button_leaveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_leaveMouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_field_usernameActionPerformed
+        client.leave();
+        System.exit(0);
+    }//GEN-LAST:event_button_leaveMouseClicked
+
+    private void listclientconnectedMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listclientconnectedMouseClicked
+        // TODO add your handling code here:
+        button_privatemessage.setEnabled(true);
+    }//GEN-LAST:event_listclientconnectedMouseClicked
 
     /* set the user name, create the new object Client and start thread waitForMessage */
     private void setUserName() {
@@ -389,12 +380,12 @@ public class ClientFrame extends javax.swing.JFrame {
         field_username.setEditable(false);
         button_message.setEnabled(true);
         button_username.setEnabled(false);
-        button_privatemessage.setEnabled(true);
+        anonomousLogin.setEnabled(false);
         username = field_username.getText();
         System.out.println("UserName: " + username);
         client = new Client(username);
         new waitForMessage().start();
-        new newClient().start();
+        new waitForNewClient().start();
     }
 
     private void displayMessage() {
@@ -406,6 +397,7 @@ public class ClientFrame extends javax.swing.JFrame {
         privateMsg = field_message.getText();
         client.sendPrivateMessage(privateMsg, listclientconnected.getSelectedValue());
         field_message.setText("");
+        button_privatemessage.setEnabled(false);
     }
 
     /* set normal message and send it */

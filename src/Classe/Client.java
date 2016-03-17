@@ -72,11 +72,12 @@ public class Client {
     public synchronized boolean getNewMessageBool() {
         return boolNewMessage;
     }
-    
-    public synchronized void setNewClientBool(boolean bool){
+
+    public synchronized void setNewClientBool(boolean bool) {
         this.boolNewClient = bool;
     }
-    public synchronized boolean getNewClientBool(){
+
+    public synchronized boolean getNewClientBool() {
         return boolNewClient;
     }
 
@@ -94,7 +95,7 @@ public class Client {
     /* Function which send a mesage for all client to the server */
     public void sendNewMessage(String message) {
         try {
-            dout.writeUTF("all:" +id+": "+message);
+            dout.writeUTF("all:" + id + ": " + message);
         } catch (IOException ex) {
             System.out.println("Exception in sendNewMessage()" + ex.getMessage());
         }
@@ -103,7 +104,16 @@ public class Client {
     /* Function which send a message for all client to the server */
     public void sendPrivateMessage(String message, String clientName) {
         try {
-            dout.writeUTF("¤¤" + clientName + ":" + id+": "+message);
+            dout.writeUTF("¤¤" + clientName + ":" + id + ": " + message);
+        } catch (Exception e) {
+            System.out.println("Exception in sendPrivateMessage()" + e.getMessage());
+        }
+    }
+
+    /* Funtion which send a message saying he leaves the server */
+    public void leave() {
+        try {
+            dout.writeUTF("¤leave¤:" + this.id);
         } catch (Exception e) {
             System.out.println("Exception in sendPrivateMessage()" + e.getMessage());
         }
