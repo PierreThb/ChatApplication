@@ -7,7 +7,12 @@ package Gui;
 
 import Classe.*;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Random;
 import javax.swing.DefaultListModel;
 
 /**
@@ -15,6 +20,11 @@ import javax.swing.DefaultListModel;
  * @author Pierre
  */
 public class ClientFrame extends javax.swing.JFrame {
+
+    Boolean isConnected = false;
+    private Socket s;
+    String address = "localhost";
+    int port = 2222;
 
     class waitForMessage extends Thread {
 
@@ -32,10 +42,10 @@ public class ClientFrame extends javax.swing.JFrame {
 
         public void run() {
             while (true) {
-                if(client.getNewClientBool()){
+                if (client.getNewClientBool()) {
                     setListClientConnected();
                     client.setNewClientBool(false);
-                    index ++;
+                    index++;
                 }
             }
         }
@@ -72,6 +82,7 @@ public class ClientFrame extends javax.swing.JFrame {
         button_username = new javax.swing.JButton();
         field_username = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
+        anonomousLogin = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         areaMessages = new javax.swing.JTextArea();
@@ -102,6 +113,11 @@ public class ClientFrame extends javax.swing.JFrame {
 
         field_username.setBackground(new java.awt.Color(255, 255, 204));
         field_username.setForeground(new java.awt.Color(255, 255, 204));
+        field_username.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                field_usernameActionPerformed(evt);
+            }
+        });
         field_username.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 field_usernameKeyPressed(evt);
@@ -109,6 +125,17 @@ public class ClientFrame extends javax.swing.JFrame {
         });
 
         jLabel1.setText("User name :");
+
+        anonomousLogin.setBackground(new java.awt.Color(0, 0, 204));
+        anonomousLogin.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/sign.png"))); // NOI18N
+        anonomousLogin.setText("Anonomous");
+        anonomousLogin.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        anonomousLogin.setIconTextGap(10);
+        anonomousLogin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                anonomousLoginActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -118,10 +145,13 @@ public class ClientFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(button_username, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(button_username)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(anonomousLogin))
                     .addComponent(field_username))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -131,8 +161,10 @@ public class ClientFrame extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(field_username, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(button_username, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(button_username, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(anonomousLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(46, Short.MAX_VALUE))
         );
 
         jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {button_username, field_username});
@@ -206,8 +238,8 @@ public class ClientFrame extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(field_message))
+                    .addComponent(field_message)
+                    .addComponent(jScrollPane1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -222,8 +254,8 @@ public class ClientFrame extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(button_leave))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -312,6 +344,45 @@ public class ClientFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_button_usernameActionPerformed
 
+    private void anonomousLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_anonomousLoginActionPerformed
+        // TODO add your handling code here:
+        field_username.setText("");
+        if (isConnected == false) {
+            String anon = "anon";
+            Random generator = new Random();
+            int i = generator.nextInt(999) + 1;
+            String is = String.valueOf(i);
+            anon = anon.concat(is);
+            username = anon;
+
+            field_username.setText(anon);
+            field_username.setEditable(false);
+
+            try {
+                s = new Socket(address, port);
+                InputStreamReader streamreader = new InputStreamReader(s.getInputStream());
+                BufferedReader reader = new BufferedReader(streamreader);
+                PrintWriter writer = new PrintWriter(s.getOutputStream());
+                writer.println(anon + ":has connected.:Connect");
+                writer.flush();
+                isConnected = true;
+            } catch (Exception e) {
+                areaMessages.append("Cannot Connect! Try Again. \n");
+                field_username.setEditable(true);
+            }
+
+            setUserName();
+
+        } else if (isConnected == true) {
+            areaMessages.append("You are already connected. \n");
+        }
+
+    }//GEN-LAST:event_anonomousLoginActionPerformed
+
+    private void field_usernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_field_usernameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_field_usernameActionPerformed
+
     /* set the user name, create the new object Client and start thread waitForMessage */
     private void setUserName() {
         field_message.setEditable(true);
@@ -389,6 +460,7 @@ public class ClientFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton anonomousLogin;
     private javax.swing.JTextArea areaMessages;
     private javax.swing.JButton button_leave;
     private javax.swing.JButton button_message;
