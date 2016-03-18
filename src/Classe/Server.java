@@ -25,23 +25,25 @@ import java.util.regex.Pattern;
 public class Server {
 
     private static final ServerFrame sf = new ServerFrame();
-
-    private final ArrayList<DataInputStream> clientSocket;
-    private final ArrayList<DataOutputStream> outputStreams;
-    private final ArrayList<String> listClientName;
-    private final WaitToConnection waiter;
-
+    private final ArrayList<DataInputStream> clientSocket; //array to store all DataInputStream of client connected
+    private final ArrayList<DataOutputStream> outputStreams; //array to store all DataOutputStream of client connected
+    private final ArrayList<String> listClientName; //list to store all clientName
+    private final WaitToConnection waiter; //object WaitToConnection
     private final ServerSocket serverSocket;
 
+    /* Pattern for new Client */
     String pattern = "^me:([\\d\\D]+)$"; //me:clientName
     Pattern r = Pattern.compile(pattern);
 
+    /* Pattern for new private message */
     String patternPrivate = "^¤¤([^:]+):(.*)$"; //¤¤clientName:message
     Pattern patPrivate = Pattern.compile(patternPrivate);
 
+    /* Pattern for message for all */
     String patternAll = "^all:([\\d\\D]+)$"; //all:message
     Pattern patAll = Pattern.compile(patternAll);
 
+    /* Pattern for if a Client want to leave */
     String patternLeave = "^¤leave¤:([\\d\\D]+)$"; //¤Leave¤:clientName
     Pattern patLeave = Pattern.compile(patternLeave);
     
@@ -67,20 +69,20 @@ public class Server {
                             Matcher mPrivate = patPrivate.matcher(msg);
                             Matcher mAll = patAll.matcher(msg);
                             Matcher mLeave = patLeave.matcher(msg);
-                            if (m.find()) {
+                            if (m.find()) { // if new Client connects
                                 System.out.println("New pseudo receive: " + m.group(1));
                                 listClientName.add(m.group(1));
                                 sf.setListClient(m.group(1));
                                 sendGlobalMessage(listClientName.toString());
-                            } else if (mAll.find()) {
+                            } else if (mAll.find()) { // if new message for all
                                 System.out.println("New message for all receive: " + mAll.group(1));
                                 sendGlobalMessage(mAll.group(1));
                                 sf.setListMessage(mAll.group(1));
-                            } else if (mPrivate.find()) {
+                            } else if (mPrivate.find()) { // if new private message
                                 System.out.println("New private message receive: " + mPrivate.group(2));
                                 sendPrivateMessage(mPrivate.group(2), mPrivate.group(1));
                                 sf.setListMessage(mPrivate.group(1));
-                            } else if (mLeave.find()){
+                            } else if (mLeave.find()){ // if a client want to leave
                                 System.out.println("Client "+mLeave.group(1)+" left");
                                 clientLeave(mLeave.group(1));
                             }
@@ -93,6 +95,9 @@ public class Server {
         }
     }
 
+    /* function which send a message to all client 
+    roaming the list of DataOutputStream
+    */
     public void sendGlobalMessage(String msg) throws IOException {
         synchronized (outputStreams) {
             for (DataOutputStream dout : outputStreams) {
@@ -102,6 +107,7 @@ public class Server {
         }
     }
 
+    /* function which send a private message to the good client */
     public void sendPrivateMessage(String msg, String clientName) throws IOException {
         int id = listClientName.indexOf(clientName);
         synchronized (outputStreams) {
@@ -111,6 +117,7 @@ public class Server {
         }
     }
     
+    /* function which performs actions when a client want to leave the server */
     public void clientLeave(String clientName) throws IOException{
         int id = listClientName.indexOf(clientName);
         synchronized(outputStreams){
@@ -130,6 +137,10 @@ public class Server {
         }
     }
 
+    /* class which extends Thread and wait for a new connection to the server
+    If there is a new connection, the server add the DataInputStream and the DataOutputStream 
+    in the corresponding list
+    */
     class WaitToConnection extends Thread {
 
         public void run() {

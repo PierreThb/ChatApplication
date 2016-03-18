@@ -23,6 +23,7 @@ public class ClientFrame extends javax.swing.JFrame {
     private Client client;
     DefaultListModel model = new DefaultListModel();
 
+    /* class which extends of Thread class and wait for a new message to display in the GUI */
     class waitForMessage extends Thread {
 
         public void run() {
@@ -35,6 +36,7 @@ public class ClientFrame extends javax.swing.JFrame {
         }
     }
 
+    /* class which extends of Thread class and wait for a new client to display in the list in the GUI */
     class waitForNewClient extends Thread {
 
         public void run() {
@@ -284,8 +286,6 @@ public class ClientFrame extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel2Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {button_leave, button_message, button_privatemessage});
-
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/chatApp.png"))); // NOI18N
 
         jLabel3.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
@@ -332,7 +332,7 @@ public class ClientFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /* button send message */
+    /* if click on button to send a message for all */
     private void button_messageMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_messageMouseClicked
         if (!field_message.getText().equals("")) {
             setAndSendMessage();
@@ -346,13 +346,14 @@ public class ClientFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_field_usernameKeyPressed
 
-    /* Button private message */
+    /* if click on Button to send a private message */
     private void button_privatemessageMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_privatemessageMouseClicked
         if (!field_message.getText().equals("")) {
             setAndSendPrivateMessage();
         }
     }//GEN-LAST:event_button_privatemessageMouseClicked
 
+    /* if click on button to "Ok" to set the username */
     private void button_usernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_usernameActionPerformed
         // TODO add your handling code here:
         if (!field_username.getText().equals("")) {
@@ -360,6 +361,7 @@ public class ClientFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_button_usernameActionPerformed
 
+    /* if click on button for an anonymous connection */
     private void anonymousLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_anonymousLoginActionPerformed
         // TODO add your handling code here:
         field_message.setEditable(true);
@@ -369,29 +371,25 @@ public class ClientFrame extends javax.swing.JFrame {
         anonymousLogin.setEnabled(false);
         String anon = "anon";
         Random generator = new Random();
-        int i = generator.nextInt(999) + 1;
+        int i = generator.nextInt(999) + 1; // generate a random number for the connection 
         String is = String.valueOf(i);
         anon = anon.concat(is);
         username = anon;
         field_username.setText(anon);
-        /* I remove the connection to the server that you was trying 
-        to do here because you just have to call the constructor
-        of Client class with the username as parameter and then start the 2
-        thread waitForMessage and waitForNewClient. Indeed, the connection
-        to the server is make in the constructor of the Client class :)
-         */
         client = new Client(anon);
         new waitForMessage().start();
         new waitForNewClient().start();
         areaMessages.setText("Welcome " + username + " to the Chat App\n");
     }//GEN-LAST:event_anonymousLoginActionPerformed
 
+    /* if click on the button to leave the server */
     private void button_leaveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_leaveMouseClicked
         // TODO add your handling code here:
-        client.leave();
+        client.leave(); // call the function from Client class
         System.exit(0);
     }//GEN-LAST:event_button_leaveMouseClicked
 
+    /* if select a client in the list of connected client, the button to set a private message is enable */
     private void listclientconnectedMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listclientconnectedMouseClicked
         // TODO add your handling code here:
         button_privatemessage.setEnabled(true);
@@ -412,11 +410,12 @@ public class ClientFrame extends javax.swing.JFrame {
         areaMessages.setText("Welcome " + username + " to the Chat App\n");
     }
 
+    /* to diplay receive message in the GUI */
     private void displayMessage() {
         areaMessages.setText(areaMessages.getText() + client.getLastMessage() + "\n");
     }
 
-    /* set private message and send it */
+    /* set private message and send it by calling the function from the Client class */
     private void setAndSendPrivateMessage() {
         privateMsg = field_message.getText();
         client.sendPrivateMessage(privateMsg, listclientconnected.getSelectedValue());
@@ -424,13 +423,14 @@ public class ClientFrame extends javax.swing.JFrame {
         button_privatemessage.setEnabled(false);
     }
 
-    /* set normal message and send it */
+    /* set normal message and send it by calling the function from the Client class */
     private void setAndSendMessage() {
         msg = field_message.getText();
         client.sendNewMessage(msg);
         field_message.setText("");
     }
 
+    /* to set and display the list of connected client in the GUI */
     private void setListClientConnected() {
         model.clear();
         listclients = client.getListClientName();

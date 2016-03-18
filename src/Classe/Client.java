@@ -71,10 +71,12 @@ public class Client {
         return boolNewMessage;
     }
 
+    /* setter */
     public synchronized void setNewClientBool(boolean bool) {
         this.boolNewClient = bool;
     }
-
+    
+    /* getter */
     public synchronized boolean getNewClientBool() {
         return boolNewClient;
     }
@@ -128,7 +130,9 @@ public class Client {
             while (!error) {
                 try {
                     if ((msg = din.readUTF()) != null) { //check if there is a data in din
-                        if (msg.startsWith("[")) {
+                        if (msg.startsWith("[")) { /* if the receive message start with '[' that's mean an other client 
+                            has been connected to the client so need to refresh the list of connected client in the GUI
+                            */
                             setListConnectedClient(msg);
                         } else {
                             System.out.println("receive:" + msg);
@@ -138,8 +142,7 @@ public class Client {
                     }
                 } catch (IOException ex) {
                     error = true;
-                    System.out.println("Error, the server in closed");
-                    //Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+                    System.out.println("Error, the server in closed"+ex.getMessage());
                 }
             }
         }

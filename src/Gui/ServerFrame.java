@@ -17,10 +17,12 @@ public class ServerFrame extends javax.swing.JFrame {
         initComponents();
     }
     
+    /* display list of client in the gui */
     public void setListClient(String str){
         area_clients.setText(area_clients.getText()+str+"\n");
     }
     
+    /* diplay list of messages in the gui */
     public void setListMessage(String str){
         area_messages.setText(area_messages.getText()+str+"\n");
     }
