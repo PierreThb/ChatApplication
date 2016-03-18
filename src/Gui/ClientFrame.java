@@ -70,7 +70,7 @@ public class ClientFrame extends javax.swing.JFrame {
         button_username = new javax.swing.JButton();
         field_username = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
-        anonomousLogin = new javax.swing.JButton();
+        anonymousLogin = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         areaMessages = new javax.swing.JTextArea();
@@ -88,7 +88,7 @@ public class ClientFrame extends javax.swing.JFrame {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Client login"));
 
-        button_username.setBackground(new java.awt.Color(0, 0, 204));
+        button_username.setBackground(new java.awt.Color(242, 95, 64));
         button_username.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/sign.png"))); // NOI18N
         button_username.setText("Ok");
         button_username.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
@@ -99,7 +99,7 @@ public class ClientFrame extends javax.swing.JFrame {
             }
         });
 
-        field_username.setBackground(new java.awt.Color(255, 255, 204));
+        field_username.setBackground(new java.awt.Color(248, 215, 109));
         field_username.setForeground(new java.awt.Color(0, 0, 0));
         field_username.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -109,14 +109,14 @@ public class ClientFrame extends javax.swing.JFrame {
 
         jLabel1.setText("User name :");
 
-        anonomousLogin.setBackground(new java.awt.Color(0, 0, 204));
-        anonomousLogin.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/sign.png"))); // NOI18N
-        anonomousLogin.setText("Anonomous");
-        anonomousLogin.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        anonomousLogin.setIconTextGap(10);
-        anonomousLogin.addActionListener(new java.awt.event.ActionListener() {
+        anonymousLogin.setBackground(new java.awt.Color(242, 95, 64));
+        anonymousLogin.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/sign.png"))); // NOI18N
+        anonymousLogin.setText("Anonymous");
+        anonymousLogin.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        anonymousLogin.setIconTextGap(10);
+        anonymousLogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                anonomousLoginActionPerformed(evt);
+                anonymousLoginActionPerformed(evt);
             }
         });
 
@@ -132,7 +132,7 @@ public class ClientFrame extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(button_username)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(anonomousLogin))
+                        .addComponent(anonymousLogin))
                     .addComponent(field_username))
                 .addContainerGap())
         );
@@ -146,7 +146,7 @@ public class ClientFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(button_username, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(anonomousLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(anonymousLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(46, Short.MAX_VALUE))
         );
 
@@ -155,16 +155,16 @@ public class ClientFrame extends javax.swing.JFrame {
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Message"));
 
         areaMessages.setEditable(false);
-        areaMessages.setBackground(new java.awt.Color(255, 255, 204));
+        areaMessages.setBackground(new java.awt.Color(248, 215, 109));
         areaMessages.setColumns(20);
         areaMessages.setForeground(new java.awt.Color(0, 0, 0));
         areaMessages.setRows(5);
         jScrollPane1.setViewportView(areaMessages);
 
-        field_message.setBackground(new java.awt.Color(255, 255, 204));
+        field_message.setBackground(new java.awt.Color(248, 215, 109));
         field_message.setForeground(new java.awt.Color(0, 0, 0));
 
-        button_message.setBackground(new java.awt.Color(0, 0, 204));
+        button_message.setBackground(new java.awt.Color(242, 95, 64));
         button_message.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/symbol (1).png"))); // NOI18N
         button_message.setText("Send All");
         button_message.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
@@ -175,9 +175,10 @@ public class ClientFrame extends javax.swing.JFrame {
             }
         });
 
-        button_privatemessage.setBackground(new java.awt.Color(0, 0, 204));
+        button_privatemessage.setBackground(new java.awt.Color(242, 95, 64));
         button_privatemessage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/security.png"))); // NOI18N
         button_privatemessage.setText("Private message");
+        button_privatemessage.setToolTipText("");
         button_privatemessage.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         button_privatemessage.setIconTextGap(10);
         button_privatemessage.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -188,7 +189,7 @@ public class ClientFrame extends javax.swing.JFrame {
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Lobby"));
 
-        listclientconnected.setBackground(new java.awt.Color(255, 255, 204));
+        listclientconnected.setBackground(new java.awt.Color(248, 215, 109));
         listclientconnected.setForeground(new java.awt.Color(0, 0, 0));
         listclientconnected.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -214,7 +215,7 @@ public class ClientFrame extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        button_leave.setBackground(new java.awt.Color(0, 0, 204));
+        button_leave.setBackground(new java.awt.Color(242, 95, 64));
         button_leave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/circle.png"))); // NOI18N
         button_leave.setText("Leave");
         button_leave.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
@@ -267,7 +268,7 @@ public class ClientFrame extends javax.swing.JFrame {
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/chatApp.png"))); // NOI18N
 
         jLabel3.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/people.png"))); // NOI18N
         jLabel3.setText("Client");
         jLabel3.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
@@ -338,13 +339,13 @@ public class ClientFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_button_usernameActionPerformed
 
-    private void anonomousLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_anonomousLoginActionPerformed
+    private void anonymousLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_anonymousLoginActionPerformed
         // TODO add your handling code here:
         field_message.setEditable(true);
         field_username.setEditable(false);
         button_message.setEnabled(true);
         button_username.setEnabled(false);
-        anonomousLogin.setEnabled(false);
+        anonymousLogin.setEnabled(false);
         String anon = "anon";
         Random generator = new Random();
         int i = generator.nextInt(999) + 1;
@@ -361,7 +362,7 @@ public class ClientFrame extends javax.swing.JFrame {
         client = new Client(anon);
         new waitForMessage().start();
         new waitForNewClient().start();
-    }//GEN-LAST:event_anonomousLoginActionPerformed
+    }//GEN-LAST:event_anonymousLoginActionPerformed
 
     private void button_leaveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_leaveMouseClicked
         // TODO add your handling code here:
@@ -380,7 +381,7 @@ public class ClientFrame extends javax.swing.JFrame {
         field_username.setEditable(false);
         button_message.setEnabled(true);
         button_username.setEnabled(false);
-        anonomousLogin.setEnabled(false);
+        anonymousLogin.setEnabled(false);
         username = field_username.getText();
         System.out.println("UserName: " + username);
         client = new Client(username);
@@ -452,7 +453,7 @@ public class ClientFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton anonomousLogin;
+    private javax.swing.JButton anonymousLogin;
     private javax.swing.JTextArea areaMessages;
     private javax.swing.JButton button_leave;
     private javax.swing.JButton button_message;
