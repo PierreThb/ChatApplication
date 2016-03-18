@@ -9,8 +9,6 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -126,7 +124,8 @@ public class Client {
 
         public void run() {
             String msg;
-            while (true) {
+            boolean error = false;
+            while (!error) {
                 try {
                     if ((msg = din.readUTF()) != null) { //check if there is a data in din
                         if (msg.startsWith("[")) {
@@ -138,7 +137,9 @@ public class Client {
                         msg = null;
                     }
                 } catch (IOException ex) {
-                    Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+                    error = true;
+                    System.out.println("Error, the server in closed");
+                    //Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
